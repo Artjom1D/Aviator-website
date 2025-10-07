@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+    <link rel="stylesheet">
+
+
+<body>
+    <header>
+        <h1>Welcome to your site AVIATOR!</h1>
+    </header>
+    <section>
+        <nav>
+            <a href="{{ url_for('login') }}">Iziet no konta</a>
+            <a href="{{ url_for('game') }}">Start spēlēt</a>"
+        </nav>
+        <article>
+            <p>Šis vietne izveidota tikai priekš izklaides nolūkiem, un tai nav mērķa veicināt vai popularizēt azartspēles jebkādā formā. 
+                Visa šeit pieejamā informācija, spēles vai simulācijas ir paredzētas tikai un vienīgi izklaidei un laika pavadīšanai. 
+                Vietnes saturs nav paredzēts, lai mudinātu lietotājus piedalīties īstās azartspēlēs vai ieguldīt reālu naudu.</p>
+        </article>
+    </section>
+    <aside>
+        <h2>Par spēli</h2>
+        <p>Aviator ir aizraujoša tiešsaistes spēle, kurā spēlētāji var laimēt virtuālo valūtu, veicot likmes uz lidmašīnas lidojuma iznākumu.</p>
+    </aside>
+    <main>
+        {% block content %}
+        
+        {% endblock %}
+    </main>
+</body>
+</html>

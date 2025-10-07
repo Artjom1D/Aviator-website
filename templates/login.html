@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOGIN</title>
+    <link rel="stylesheet">
+
+<body>  
+    <main>
+        {% block content %}
+        <form action="{{ url_for('login') }}" method="POST">
+            <label for="email">
+              <input class="form__input" type="email" name="email" id="email" placeholder="Ievadiet savu e-pastu" required>
+            </label>
+            <label for="password">
+              <input class="form_password" type="password" name="password" id="password" placeholder="Ievadiet paroli" required>
+            </label>
+            <button class="form__button" a href="{{ url_for('site') }}">Pieteikties</button>
+            
+      
+        </form>
+        <br>
+        <a href="{{ url_for('reg') }}" class="form__button">Uz reģestrēšanu</a>
+        {% endblock %}
+    </main>
+</body>
+</html>
