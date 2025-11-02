@@ -1,48 +1,96 @@
 from flask import Flask, request, render_template, redirect
-from database import con, cur
 import sqlite3
+from sqlalchemy import ForeignKey
+from flask_sqlalchemy import SQLAlchemy
+from wtforms import Form, StringField, PasswordField, BooleanField, validators
+import bcrypt
 app = Flask(__name__)
 
-def get_db():
-    con = sqlite3.connect('data.db')
-    cur = con.cursor()
-    return con, cur
+
+
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+def hashed_str(plain_text):
+    return bcrypt.hashpw(plain_text.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def check_str(plain_text, hashed_str):
+    if isinstance(hashed_str, str):
+        hashed_str = hashed_str.encode('utf-8')
+    return bcrypt.checkpw(plain_text.encode('utf-8'), hashed_str)
+db = SQLAlchemy(app)
+class User(db.Model):
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    email = db.Column(db.String(50), nullable=False)
+    username = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(50), nullable=False)
+    score_shishka = db.Column(db.Integer, db.ForeignKey('score.ponal'))
+
+
+class Score(db.Model):
+    ponal = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    score_shishka = db.Column(db.Integer, nullable=False)
+
+class RegistrationForm(Form):
+    username = StringField('Username', [validators.Length(min=4, max=25)])
+    email = StringField('Email Address', [validators.Length(min=6, max=35)])
+    password = PasswordField('New Password', [
+        validators.DataRequired(),
+        validators.EqualTo('confirm', message='Passwords must match')])
+    confirm = PasswordField('Repeat Password')
+    accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
+
+
+
+
+
+
 
 @app.route('/', methods=['GET','POST'])
 def login():
         error = ''
-        con, cur = get_db()
+        form = RegistrationForm(request.form)
         if request.method == 'POST':
-            form_login = request.form['email']
-            form_password = request.form['password']
-            
-            cur.execute("SELECT email, password FROM user")
-            users_db = cur.fetchall()
+            form.email = request.form['email']
+            if not form.email.endswith("@gmail.com"):
+                error = 'Nepareizs epasts'
+                return render_template('login.html', error=error)
+            form.password = request.form['password']
+            users_db = User.query.all()
             for user in users_db:
-                if form_login == user[0] and form_password == user[1]:
-                    con.close()
-                    return redirect('/site')
-            error = 'Nepareizs lietotājs vai parole'
-            con.close()
+                
+                if form.email == user.email and check_str(form.password, user.password):
+                    return render_template('site.html', error=error)
+            else:
+                error = 'Nepareizs lietotājs vai parole'
+                return render_template('login.html', error=error)
+
+            
+        else:
             return render_template('login.html', error=error)
-        con.close()
-        return render_template('login.html', error=error)
 
 @app.route('/reg' , methods=['GET', 'POST'])
 def reg():
         error = ''
-        con, cur = get_db()
+        form = RegistrationForm(request.form)
         if request.method == 'POST':
-            form__email = request.form['email']
-            form__password = request.form['password']
-            form__username = request.form['username']
-            cur.execute("INSERT INTO user (email, password, username) values (?, ?, ?)", (form__email, form__password, form__username))
-            con.commit()
-            con.close()
-            return render_template('login.html', error=error)
+            form.username = request.form['username']
+            form.email = request.form['email']
+            if not form.email.endswith("@gmail.com"):
+                error = 'Nepareizs epasts'
+                return render_template('regestration.html', error=error)
+            form.password = request.form['password']
         
-        else:
-            con.close()
+            hashed_password = hashed_str(form.password)
+            user = User(email=form.email, password=hashed_password, username=form.username)
+            db.session.add(user)
+            db.session.commit()
+        
+            return render_template('login.html', error=error)
+        else:    
             return render_template('regestration.html', error=error)
 @app.route("/site")
 def site():
@@ -53,4 +101,6 @@ def game():
     return render_template("game.html")
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
