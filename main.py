@@ -43,8 +43,8 @@ class RegistrationForm(Form):
         self.email = email
         self.password = password
     
-    def validation_email(self, field):
-        if not field.data.endswith("@gmail.com"):
+    def validation_email(self, email):
+        if not email.data.endswith("@gmail.com"):
             raise validators.ValidationError('Nepareizs epasts')
 
 
@@ -58,7 +58,7 @@ def login():
         form = RegistrationForm(request.form)
         if request.method == 'POST':
             form.email = request.form['email']
-            if not form.email.endswith("@gmail.com"):
+            if not form.email.endswith("@gmail.com") and form.validation_email(form.email):
                 error = 'Nepareizs epasts'
                 return render_template('login.html', error=error)
             form.password = request.form['password']
@@ -82,7 +82,7 @@ def reg():
         if request.method == 'POST':
             form.username = request.form['username']
             form.email = request.form['email']
-            if not form.email.endswith("@gmail.com"):
+            if not form.email.endswith("@gmail.com") and form.validation_email(form.email):
                 error = 'Nepareizs epasts'
                 return render_template('regestration.html', error=error)
             form.password = request.form['password']
