@@ -21,10 +21,13 @@
               <input class="form_username" type="username" name="username" id="username" placeholder="Your gambling adiction name" required>
             </label>
              <button class="form__button">Reģestrēties</button>
-      
+          </dl>
         </form>
         <br>
         <a href="{{ url_for('login') }}" class="form__button">Uz pieteikšanu</a>
+     {% if error %}
+     <div class="error-message">{{ error }}</div>
+     {% endif %}
         {% endblock %}
     </main>
 </body>

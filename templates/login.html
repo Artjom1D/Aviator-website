@@ -19,10 +19,12 @@
             </label>
             <button class="form__button" a href="{{ url_for('site') }}">Pieteikties</button>
             
-      
         </form>
         <br>
         <a href="{{ url_for('reg') }}" class="form__button">Uz reģestrēšanu</a>
+  {% if error %}
+  <div class="error-message">{{ error }}</div>
+  {% endif %}
         {% endblock %}
     </main>
 </body>

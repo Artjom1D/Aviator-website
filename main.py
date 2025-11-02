@@ -34,15 +34,18 @@ class Score(db.Model):
     ponal = db.Column(db.Integer, primary_key=True, autoincrement=True)
     score_shishka = db.Column(db.Integer, nullable=False)
 
-class RegistrationForm(Form):
-    username = StringField('Username', [validators.Length(min=4, max=25)])
-    email = StringField('Email Address', [validators.Length(min=6, max=35)])
-    password = PasswordField('New Password', [
-        validators.DataRequired(),
-        validators.EqualTo('confirm', message='Passwords must match')])
-    confirm = PasswordField('Repeat Password')
-    accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
+
+
+class RegistrationForm(Form):
+    def __init__(self, username='', email='', password=''):
+        self.username = username
+        self.email = email
+        self.password = password
+    
+    def validation_email(self, field):
+        if not field.data.endswith("@gmail.com"):
+            raise validators.ValidationError('Nepareizs epasts')
 
 
 
