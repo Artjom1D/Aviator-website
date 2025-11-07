@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FEEDBACK</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Your FEEDBACK</h1>
+    </header>
+    
+    <section>
+        <article>
+            <p>Šeit jūs varāt uzrakstīt savu pārskatu par spēli un vietu</p>
+        </article>
+    </section>
+
+    <main class="main">
+        <form method="POST" action="{{ url_for('feed') }}" class="feedback-form">
+            <input type="text" name="title" placeholder="Virsraksts" required>
+            <textarea name="message" placeholder="Jūsu atsauksme" required></textarea>
+            <button type="submit" class="main__link">Iesniegt</button>
+        </form>
+
+        {% if cards %}
+            {% for card in cards %}
+            <div class="main__block">
+                <h2 class="main__title">{{ card.title }}</h2>
+                <div class="main__text">
+                    {{ card.message }}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Pagaidām nav atsauksmju</p>
+        {% endif %}
+
+        <a class="main__link" href="{{ url_for('site') }}">Atpakaļ</a>
+    </main>
+</body>
+</html>

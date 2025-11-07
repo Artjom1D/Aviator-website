@@ -8,8 +8,26 @@ app = Flask(__name__)
 
 
 
+class RegistrationForm(Form):
+    def __init__(self, username='', email='', password=''):
+        self.username = username
+        self.email = email
+        self.password = password
+    
+    def validation_email(self, email):
+        if not email.data.endswith("@gmail.com"):
+            raise validators.ValidationError('Nepareizs epasts')
 
 
+
+    def existis(self, email):
+        q = db.session.query(User).filter_by(email=email)
+        exist = db.session.query(q.exists()).scalar()
+        if exist is True:
+            return 0
+        else:
+            return 1
+        
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -34,21 +52,10 @@ class Score(db.Model):
     ponal = db.Column(db.Integer, primary_key=True, autoincrement=True)
     score_shishka = db.Column(db.Integer, nullable=False)
 
-
-
-
-class RegistrationForm(Form):
-    def __init__(self, username='', email='', password=''):
-        self.username = username
-        self.email = email
-        self.password = password
-    
-    def validation_email(self, email):
-        if not email.data.endswith("@gmail.com"):
-            raise validators.ValidationError('Nepareizs epasts')
-
-
-
+class Card(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    title = db.Column(db.String(50), nullable=False)
+    message = db.Column(db.String(500), nullable=False)
 
 
 
@@ -102,6 +109,20 @@ def site():
 @app.route("/game")
 def game():
     return render_template("game.html")
+
+@app.route("/feedback", methods=['GET', 'POST'])
+def feed():
+    if request.method == 'POST':
+        title = request.form['title']
+        message = request.form['message']
+
+        card = Card(title=title, message=message)
+        db.session.add(card)
+        db.session.commit()
+        return redirect('/site')
+    else:
+        cards = Card.query.all()
+        return render_template("feedback.html", cards=cards)
 
 if __name__ == '__main__':
     with app.app_context():
