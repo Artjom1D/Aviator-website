@@ -1,0 +1,21 @@
+Flask==2.3.2
+Flask-SQLAlchemy==3.0.3
+SQLAlchemy==2.0.24
+WTForms==3.0.1
+bcrypt==4.0.1
+
+# Optional developer/test packages
+# python-dotenv can be useful if you want to load env vars from a .env file
+python-dotenv==1.0.0
+
+# How to install (PowerShell)
+# 1) (Optional) Create and activate a virtual environment:
+#    python -m venv .venv
+#    .\.venv\Scripts\Activate.ps1
+# 2) Install requirements:
+#    pip install -r req.txt
+
+# Notes:
+# - If you get permission or SSL errors on Windows, try upgrading pip:
+#    python -m pip install --upgrade pip
+# - If bcrypt fails to compile, install the prebuilt wheel by ensuring pip is up-to-date
