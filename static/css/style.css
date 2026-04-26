@@ -224,6 +224,22 @@ main {
     }
 }
 
+/* Игровой контейнер */
+.game-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+}
+
+.game-frame {
+    width: 100%;
+    height: 600px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background-color: #000000;
+}
+
 /* Адаптивный дизайн */
 @media (max-width: 768px) {
     header h1 {
@@ -251,5 +267,14 @@ main {
     .main__link {
         width: 100%;
         text-align: center;
+    }
+
+    .game-frame {
+        height: 400px;
+    }
+
+    .game-container {
+        max-width: 100%;
+        padding: 0;
     }
 }

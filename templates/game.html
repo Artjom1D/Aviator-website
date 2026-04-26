@@ -16,6 +16,16 @@
         <a href="{{ url_for('site') }} ">Atpakaļ uz mājaslapu</a>
     </nav>
     <main>
+        <div class="game-container">
+            <iframe 
+                id="game-iframe" 
+                src="{{ url_for('static', filename='game/index.html') }}" 
+                frameborder="0" 
+                allowfullscreen
+                allow="fullscreen"
+                class="game-frame">
+            </iframe>
+        </div>
         {% block content %}
         
         {% endblock %}
