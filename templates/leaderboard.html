@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LEADERBOARD</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<body>
+    <header>
+        <h1>Таблица лидеров - AVIATOR</h1>
+    </header>
+    <nav>
+        <a href="{{ url_for('site') }}">Menu</a>
+        <a href="{{ url_for('game') }}">Spēlēt</a>
+    </nav>
+    <main>
+        <div class="leaderboard-container">
+            <h2>🏆 Топ игроков</h2>
+            <div id="leaderboard">
+                <p id="loading">Загрузка таблицы лидеров...</p>
+            </div>
+        </div>
+        {% block content %}
+
+        {% endblock %}
+    </main>
+
+    <script>
+        async function loadLeaderboard() {
+            try {
+                const response = await fetch('/api/leaderboard');
+                const data = await response.json();
+
+                if (data.leaderboard && data.leaderboard.length > 0) {
+                    const leaderboardHTML = data.leaderboard.map((entry, index) => `
+                        <div class="leaderboard-entry ${index < 3 ? 'top-' + (index + 1) : ''}">
+                            <div class="rank">#${index + 1}</div>
+                            <div class="player-info">
+                                <div class="username">${entry.username}</div>
+                                <div class="email">${entry.email}</div>
+                            </div>
+                            <div class="score">${entry.score}</div>
+                        </div>
+                    `).join('');
+
+                    document.getElementById('leaderboard').innerHTML = leaderboardHTML;
+                } else {
+                    document.getElementById('leaderboard').innerHTML = '<p>Пока нет результатов. Будьте первым!</p>';
+                }
+            } catch (error) {
+                console.error('Error loading leaderboard:', error);
+                document.getElementById('leaderboard').innerHTML = '<p>Ошибка загрузки таблицы лидеров</p>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadLeaderboard);
+    </script>
+</body>
+</html>

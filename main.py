@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, render_template, redirect, jsonify
 import sqlite3
 from sqlalchemy import ForeignKey
 from flask_sqlalchemy import SQLAlchemy
@@ -123,6 +123,95 @@ def feed():
     else:
         cards = Card.query.all()
         return render_template("feedback.html", cards=cards)
+
+@app.route("/api/save_score", methods=['POST'])
+def save_score():
+    try:
+        data = request.get_json()
+        score = data.get('score', 0)
+        user_email = data.get('user_email')  # Пока что используем email для идентификации
+
+        if not user_email:
+            return jsonify({'error': 'User email required'}), 400
+
+        # Найти пользователя
+        user = User.query.filter_by(email=user_email).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Создать или обновить запись счета
+        score_record = Score.query.filter_by(ponal=user.score_shishka).first() if user.score_shishka else None
+
+        if score_record:
+            # Обновить существующий счет (если новый счет выше)
+            if score > score_record.score_shishka:
+                score_record.score_shishka = score
+        else:
+            # Создать новую запись счета
+            score_record = Score(score_shishka=score)
+            db.session.add(score_record)
+            db.session.flush()  # Получить ID новой записи
+            user.score_shishka = score_record.ponal
+
+        db.session.commit()
+
+        return jsonify({
+            'success': True,
+            'message': 'Score saved successfully',
+            'new_score': score
+        })
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/api/get_score", methods=['GET'])
+def get_score():
+    try:
+        user_email = request.args.get('user_email')
+        if not user_email:
+            return jsonify({'error': 'User email required'}), 400
+
+        user = User.query.filter_by(email=user_email).first()
+        if not user or not user.score_shishka:
+            return jsonify({'score': 0})
+
+        score_record = Score.query.filter_by(ponal=user.score_shishka).first()
+        score = score_record.score_shishka if score_record else 0
+
+        return jsonify({'score': score})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/api/leaderboard", methods=['GET'])
+def get_leaderboard():
+    try:
+        # Получить топ 10 игроков с их счетами
+        leaderboard = db.session.query(
+            User.username,
+            User.email,
+            Score.score_shishka.label('score')
+        ).join(Score, User.score_shishka == Score.ponal)\
+         .filter(User.score_shishka.isnot(None))\
+         .order_by(Score.score_shishka.desc())\
+         .limit(10)\
+         .all()
+
+        result = [{
+            'username': entry.username,
+            'email': entry.email,
+            'score': entry.score
+        } for entry in leaderboard]
+
+        return jsonify({'leaderboard': result})
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route("/leaderboard")
+def leaderboard():
+    return render_template("leaderboard.html")
 
 if __name__ == '__main__':
     with app.app_context():

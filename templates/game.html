@@ -1,34 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
-<html>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GAME</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
 
-
-<body>
+<body class="game-page">
     <header>
         <h1>Game "AVIATOR"</h1>
     </header>
     <nav>
         <a href="{{ url_for('site') }} ">Atpakaļ uz mājaslapu</a>
     </nav>
-    <main>
+    <main class="game-main">
         <div class="game-container">
-            <iframe 
-                id="game-iframe" 
-                src="{{ url_for('static', filename='game/index.html') }}" 
-                frameborder="0" 
+            <iframe
+                id="game-iframe"
+                src="{{ url_for('static', filename='game/Vaviators.html') }}"
+                width="1152"
+                height="648"
+                frameborder="0"
                 allowfullscreen
                 allow="fullscreen"
                 class="game-frame">
             </iframe>
         </div>
         {% block content %}
-        
+
         {% endblock %}
     </main>
+
+    <script>
+    
+        const userEmail = '123@gmail.com'; 
+
+        
+        async function loadCurrentScore() {
+            try {
+                const response = await fetch(`/api/get_score?user_email=${encodeURIComponent(userEmail)}`);
+                const data = await response.json();
+
+                if (data.score !== undefined) {
+                    document.getElementById('current-score').textContent = data.score;
+                    document.getElementById('score-status').textContent = 'Счет загружен';
+                } else {
+                    document.getElementById('score-status').textContent = 'Ошибка загрузки счета';
+                }
+            } catch (error) {
+                console.error('Error loading score:', error);
+                document.getElementById('score-status').textContent = 'Ошибка загрузки счета';
+            }
+        }
+
+        // Функция для сохранения нового счета
+        async function saveScore(newScore) {
+            try {
+                const response = await fetch('/api/save_score', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        score: newScore,
+                        user_email: userEmail
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('current-score').textContent = data.new_score;
+                    document.getElementById('score-status').textContent = 'Счет сохранен!';
+                    setTimeout(() => {
+                        document.getElementById('score-status').textContent = '';
+                    }, 3000);
+                } else {
+                    document.getElementById('score-status').textContent = 'Ошибка сохранения: ' + data.error;
+                }
+            } catch (error) {
+                console.error('Error saving score:', error);
+                document.getElementById('score-status').textContent = 'Ошибка сохранения счета';
+            }
+        }
+
+        // Слушать сообщения от iframe (игры)
+        window.addEventListener('message', function(event) {
+            // Проверяем, что сообщение от нашего iframe
+            if (event.source === document.getElementById('game-iframe').contentWindow) {
+                if (event.data.type === 'gameScore') {
+                    const score = event.data.score;
+                    console.log('Received score from game:', score);
+                    saveScore(score);
+                }
+            }
+        });
+
+        // Загрузить счет при загрузке страницы
+        document.addEventListener('DOMContentLoaded', loadCurrentScore);
+
+    </script>
 </body>
 </html>

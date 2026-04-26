@@ -129,6 +129,35 @@ main {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
 }
 
+body.game-page main.game-main {
+    max-width: none;
+    width: auto;
+    margin: 2rem auto;
+    padding: 1rem 0 2rem;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+body.game-page .game-container {
+    width: 1152px;
+    min-width: 1152px;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+
+body.game-page .game-frame {
+    display: block;
+    margin: 0 auto;
+    width: 1152px !important;
+    height: 648px !important;
+    min-width: 1152px;
+    min-height: 648px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    background-color: #000000;
+}
+
 /* Отзывы */
 .feedback-form {
     background-color: rgba(255, 255, 255, 0.1);
@@ -211,8 +240,6 @@ main {
     border-radius: 10px;
     font-size: 0.9rem;
 }
-
-/* Анимации */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -224,23 +251,137 @@ main {
     }
 }
 
-/* Игровой контейнер */
+
 .game-container {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto 2rem;
-    padding: 0 1rem;
+    width: 1152px;
+    max-width: 100%;
 }
 
 .game-frame {
-    width: 100%;
-    height: 600px;
+    width: 1152px !important;
+    height: 648px !important;
+    min-width: 1152px;
+    min-height: 648px;
     border-radius: 15px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     background-color: #000000;
 }
 
-/* Адаптивный дизайн */
+.game-container {
+    width: 1152px;
+    min-width: 1152px;
+    max-width: 100%;
+    overflow-x: auto;
+}
+/* Отображение счета */
+.score-display {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.score-display h2 {
+    color: #ff6b6b;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.score-display #current-score {
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.score-display #score-status {
+    color: #ff8e8e;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+}
+
+/* Таблица лидеров */
+.leaderboard-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.leaderboard-container h2 {
+    text-align: center;
+    color: #ff6b6b;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.leaderboard-entry {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.leaderboard-entry:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-2px);
+}
+
+.leaderboard-entry.top-1 {
+    background: linear-gradient(45deg, #ffd700, #ffed4e);
+    color: #000;
+}
+
+.leaderboard-entry.top-2 {
+    background: linear-gradient(45deg, #c0c0c0, #e8e8e8);
+    color: #000;
+}
+
+.leaderboard-entry.top-3 {
+    background: linear-gradient(45deg, #cd7f32, #d2b48c);
+    color: #000;
+}
+
+.rank {
+    font-size: 1.5rem;
+    font-weight: bold;
+    width: 60px;
+    text-align: center;
+    color: #ff6b6b;
+}
+
+.player-info {
+    flex: 1;
+    margin-left: 1rem;
+}
+
+.username {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.email {
+    font-size: 0.9rem;
+    color: #cccccc;
+}
+
+.score {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ff6b6b;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
 @media (max-width: 768px) {
     header h1 {
         font-size: 2rem;
@@ -270,11 +411,20 @@ main {
     }
 
     .game-frame {
-        height: 400px;
+        width: 1152px;
+        height: 648px;
     }
 
     .game-container {
         max-width: 100%;
         padding: 0;
+    }
+
+    .score-display h2 {
+        font-size: 1.5rem;
+    }
+
+    .score-display #current-score {
+        font-size: 2rem;
     }
 }
